@@ -1,4 +1,7 @@
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Scanner;
+
 
 public class Main {
     public static void main(String[] args) {
@@ -35,20 +38,21 @@ public class Main {
                 String operationType = scanner.next();
                 DBhandler.createOperationTable(operationType);
                 break;
-            case 3: // Сложение
-            case 4: // Вычитание
-            case 5: // Умножение
-            case 6: // Деление
-            case 7: // Модуль (остаток от деления)
-            case 8: // Модуль числа
-            case 9: // Возведение в степень
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+            case 9:
                 System.out.println("Введите первое число:");
                 a = scanner.nextDouble();
                 b = choice != 8 ? getSecondNumber(scanner) : 0;
                 performMathOperation(choice, a, b);
                 break;
             case 10:
-                System.out.println("Тут могла быть ваша реклама");
+                ExcelExporter exporter = new ExcelExporter();
+                exporter.export();
                 break;
             case 0:
                 System.out.println("Выход из программы...");
@@ -62,40 +66,40 @@ public class Main {
         System.out.println("Введите второе число:");
         return scanner.nextDouble();
     }
-
     private static void performMathOperation(int operation, double a, double b) {
         double result = 0;
         String operationType = "";
-        switch (operation) {
-            case 3:
+        result = switch (operation) {
+            case 3 -> {
                 operationType = "addition";
-                result = MathOperations.add(a, b);
-                break;
-            case 4:
+                yield MathOperations.add(a, b);
+            }
+            case 4 -> {
                 operationType = "subtraction";
-                result = MathOperations.subtract(a, b);
-                break;
-            case 5:
+                yield MathOperations.subtract(a, b);
+            }
+            case 5 -> {
                 operationType = "multiplication";
-                result = MathOperations.multiply(a, b);
-                break;
-            case 6:
+                yield MathOperations.multiply(a, b);
+            }
+            case 6 -> {
                 operationType = "division";
-                result = MathOperations.divide(a, b);
-                break;
-            case 7:
+                yield MathOperations.divide(a, b);
+            }
+            case 7 -> {
                 operationType = "modulo";
-                result = MathOperations.modulo(a, b);
-                break;
-            case 8:
+                yield MathOperations.modulo(a, b);
+            }
+            case 8 -> {
                 operationType = "absolute";
-                result = MathOperations.absolute(a);
-                break;
-            case 9:
+                yield MathOperations.absolute(a);
+            }
+            case 9 -> {
                 operationType = "power";
-                result = MathOperations.power(a, b);
-                break;
-        }
+                yield MathOperations.power(a, b);
+            }
+            default -> result;
+        };
         System.out.println("Результат: " + result);
         DBhandler.saveOperationResult(operationType, a, b, result);
     }
